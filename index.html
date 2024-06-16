@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="weatherapi.css" />
+  </head>
+  <body>
+    <div class="main">
+      <h1 class="title">Weather app</h1>
+    <div class="container">
+     
+      <div class="search">
+        <input type="text" placeholder="Enter city name" />
+        <button id="btn"><i class="fa fa-search" style="color: aliceblue;"></i></button>
+      </div>
+
+      <div class="weather">
+        <img src="sunny-image.png" class="weather-icon" />
+        <h1 class="temp">25°C</h1>
+        <h2 class="city">New Delhi</h2>
+
+        <div class="details">
+          <div class="col">
+            <img src="humid.png" height="50px" style="color: aliceblue" />
+            <div>
+              <p class="humidity">50%</p>
+              <p>Humidity</p>
+            </div>
+          </div>
+          <div class="col">
+            <img src="renewable-energy.png" height="50px" />
+            <div>
+              <p class="wind">15 kmph</p>
+              <p>Wind</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="not-found">
+        <div class="box">
+          <img src="404-error.png" height="50px" />
+          <p>Oops! Location not found!</p>
+        </div>
+      </div>
+      
+    </div>
+    </div>
+  </body>
+
+  <script>
+    let apiKey = "6a6adf96f7dc4efd5229441f145ec3f0";
+    let apiUrl =
+      "https://api.openweathermap.org/data/2.5/weather?units=metric&appid=" +
+      apiKey +
+      "&q=";
+
+    let searchBox = document.querySelector(".search input");
+    let searchBtn = document.getElementById("btn");
+    let weatherIcon = document.querySelector(".weather-icon");
+
+    // let container=document.querySelector(".container")
+
+    async function checkWeather(city) {
+      let response = await fetch(apiUrl + city);
+      if (response.status == 404) {
+        error404 = document.querySelector(".not-found");
+        error404.style.display = "block";
+        weather = document.querySelector(".weather");
+        weather.style.display = "none";
+      } else {
+        var data = await response.json();
+
+        temp = document.querySelector(".temp");
+        temp.innerHTML = Math.round(data.main.temp) + "°C";
+
+        city = document.querySelector(".city");
+        city.innerHTML = data.name;
+
+        humidity = document.querySelector(".humidity");
+        humidity.innerHTML = data.main.humidity + "%";
+
+        wind = document.querySelector(".wind");
+        wind.innerHTML = data.wind.speed + "kmph";
+
+        if (data.weather[0].main == "Clear") {
+          weatherIcon.src = "sun.png";
+        } else if (data.weather[0].main == "Clouds") {
+          weatherIcon.src = "cloudy.png";
+        } else if (data.weather[0].main == "Drizzle") {
+          weatherIcon.src = "drizzle.png";
+        } else if (data.weather[0].main == "Mist") {
+          weatherIcon.src = "mist.png";
+        } else if (data.weather[0].main == "Rain") {
+          weatherIcon.src = "rainy-day.png";
+        }
+
+        weather = document.querySelector(".weather");
+        weather.style.display = "block";
+        error404 = document.querySelector(".not-found");
+        error404.style.display = "none";
+      }
+    }
+
+    searchBtn.addEventListener("click", () => {
+      checkWeather(searchBox.value);
+    });
+  </script>
+</html>
